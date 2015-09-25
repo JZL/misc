@@ -1,0 +1,92 @@
+" disables the arrow keys
+noremap <Up> <NOP>
+noremap <Down> <NOP>
+noremap <Left> <NOP>
+noremap <Right> <NOP>
+
+call pathogen#infect()
+syntax enable " enable synatx processing
+"make tabs work nicely
+set tabstop=4 "visual spaces per tab
+set softtabstop=4 " # spaces removed removed and inserted
+set expandtab " tabs are spaces
+set showcmd " show command in bottom right
+filetype indent on " load filtye specific indent files ie .vim/indent/python.vim
+set wildmenu " when run :e ~/.vim it'll show options
+set lazyredraw " make some things faster
+set showmatch " highlight when over [](){}
+
+let mapleader="," " leader is comma
+" searching
+set incsearch " search as entered
+set hlsearch " highlight macthes
+" turn off search highlight
+nnoremap <leader><space> :noh<CR>
+" makes :q easier, etc
+
+
+" movement
+
+" move vertically by visual line
+nnoremap j gj
+nnoremap k gk
+" highlights last inserted text
+noremap gV `[v`] 
+noremap ; :
+set ruler " have line number and chacatcer in status bar
+
+" save session so open with vim -S and will reopen
+nnoremap <leader>s :mksession<CR>
+set nowrap " dont wrap lines
+set ignorecase " ignore case when searching
+set smartcase " if is all lowercase, dont care about case, else do
+set history=1000 " remember more
+set undolevels=1000 " more undo levels
+set title " better title
+" if write w!! will save w sudo even if not sudo vim
+cmap w!! w !sudo tee %>/dev/null
+set showmode
+set undofile " so if restart, undos stay
+nnoremap / /\v
+" nnoremap <leader><leader> :w<cr>
+" leader c to comment w tComment
+" map <leader>c <c-_><c-_>
+"gc{motion} toggles comment
+set relativenumber
+set number 
+" more to do w easymotion https://github.com/Lokaltog/vim-easymotion
+
+nmap <F3> :set nu!<CR>:set rnu!<CR>
+" on F1, toggles relative number and abs number so can copy out of
+nmap s <Plug>(easymotion-s2)
+set pastetoggle=<F2>
+" autocmd FileType javascript setlocal equalprg=js-beautify\ --stdin
+" map <c-f> :call JsBeautify()<cr>
+
+" let g:editorconfig_Beautifier="~/Dropbox/vim/beautifier_config"
+
+autocmd FileType javascript noremap <buffer>  <c-f> :call JsBeautify()<cr>
+  " for html
+  autocmd FileType html noremap <buffer> <c-f> :call HtmlBeautify()<cr>
+  " for css or scss
+  autocmd FileType css noremap <buffer> <c-f> :call CSSBeautify()<cr>
+" in html, css, js, type ^CF and will autoformat
+" swicth between vim splits http://vim.wikia.com/wiki/Switch_between_Vim_window_splits_easily 
+nmap <silent> <A-Up> :wincmd k<CR>
+nmap <silent> <A-Down> :wincmd j<CR>
+nmap <silent> <A-Left> :wincmd h<CR>
+nmap <silent> <A-Right> :wincmd l<CR>
+" allows incsearch highlighting for range commands http://www.reddit.com/r/vim/comments/1yfzg2/does_anyone_actually_use_easymotion/
+cnoremap $t <CR>:t''<CR>
+cnoremap $T <CR>:T''<CR>
+cnoremap $m <CR>:m''<CR>
+cnoremap $M <CR>:M''<CR>
+cnoremap $d <CR>:d<CR>``
+
+
+inoremap <special> <expr> <Esc>[200~ XTermPasteBegin()
+
+" Start scrolling three lines before the horizontal window border
+set scrolloff=3
+set autoread
+" Makes files reload when view

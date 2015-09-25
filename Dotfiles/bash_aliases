@@ -1,0 +1,82 @@
+export PERLLIB=$PERLLIB:/data1/igm3/sw/lib/perl5/
+export PATH=$PATH:/home/dpuiu/bin
+
+ alias lsr='ls -1rt'
+ alias rls='ls -1rt'
+ alias rl='ls -1rt'
+ alias hh='history>>~/history.bk'
+ alias mp='mummerplot -layout'
+ alias "gc"='grep -c "^>"'
+ alias "p"='perl -ane'
+ alias "ff"='find . -name'
+ alias copy='xclip -selection c'
+ alias paste='xclip -selection clipboard -o'
+ alias bcps='/etc/cron.daily/Jonah-Engrade'
+ alias crypt='sudo mount -t ecryptfs ~/Dropbox/Crypt/ ~/Dropbox/Crypt/'
+ alias ref='less -S ~/Dropbox/command.txt'
+ alias setsaba='sabaIP=$(nmap -p 22 --open -sV 192.168.1.0/24|grep -o "192.168.1.[0-9]*");echo $sabaIP > ~/Dropbox/sabaComputerIP'
+ alias printsaba='ssh jonah@$(cat ~/Dropbox/sabaComputerIP) lpr -o outputorder=reverse < $(ls -rt1|tail -1)'
+ alias sshsaba='ssh jonah@$(cat ~/Dropbox/sabaComputerIP)'
+ alias n.='nautilus .'
+ alias openfile='xdg-open'
+ alias of='xdg-open'
+ alias beep='aplay ~/Dropbox/Public/Permanent\ To\ Share/Good.wav'
+ alias alertbeep='alert "Done";beep'
+ alias econ='evince -f  /home/jonah/Dropbox/school/Economics/Principle.of.Economics.By.Mankiw.pdf&'
+ function cs() {
+	cd $1;
+	ls
+ }
+
+function rlg(){
+	find . -print|grep $1
+}
+
+ function gh(){
+	history|grep $1;
+ }
+
+function gl(){
+        ls|grep $1;
+ }
+
+function lg(){
+	ls|grep $1;
+ }
+
+function add(){
+	echo -e "$1:\n	$(history|tail -n 2|head -n 1|sed 's/^[0-9 ]*//g')">> ~/Dropbox/command.txt
+ }
+
+function keep(){
+	echo -e "$1:\n	$(history|tail -n 2|head -n 1|sed 's/^[0-9 ]*//g')">> ~/Dropbox/command.txt
+ }
+
+function transfer(){
+	curl --upload-file $1 https://transfer.sh/$(basename $1);
+ }
+
+function pdfrev(){
+	pdftk "$1" cat 1-endsouth output "Reversed.pdf";
+	mv "Reversed.pdf" "$1";
+}
+                        
+function keeploc(){
+    echo -e "$1:\n  $(history|tail -n 2|head -n 1|sed 's/^[0-9 ]*//g')">> ./command.txt    
+}
+# pass in a filename(quoted) and a directory(wo *, quoted) and will search for any lines that dont start with any of the same space sep values as the file and returns that line
+#i.e. give a latin crossword and then a folder of all the other adjectives, will return any adj not yet used
+function checkDiffFolder(){ 
+    comm  -13 <(cat "$1" |awk -F ' ' '{print $1}'|sort) <(  find "$2" \( ! -name '.*' \) -and -not -path "$2" -exec cat {} +|awk -F ' ' '{print $1}'|sort)|grep -shf -  $(find ../../Adjectiva/ \( ! -name '.*' \)) ; 
+}
+
+function latinAdj(){
+    cat $1|awk -F " " '{print $4"|"$1" "$2" "$3}'|copy
+}
+function bibAndLatex(){
+pdflatex $1;bibtex $1;pdflatex $1;pdflatex $1
+}
+function econtest(){
+xdg-open file:///home/jonah/Dropbox/Public/Useful%20Programs/Speak%20Test/rationanswers.html;
+echo '["'`unoconv -f txt --stdout "$1"|sed -n '/Answer Section/,$p'|grep -o "ANS:\s*[A-Z]"|sed "s/ANS:\s*//g"|tr "\n" "@"|sed 's/@/","/g'|sed 's/,"$//g'`"]"|copy
+}
