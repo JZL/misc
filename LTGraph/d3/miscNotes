@@ -1,0 +1,70 @@
+http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.js
+
+ $.getJSON("https://www.librarything.com/api_getdata.php?userid=lorem&key=3038189884&booksort=entry_REV&max=100&showReviews=1&reviewsOnly=1&callback=?",function(response){LTJSON = response.books})
+ // //  <script src="bower_components/list-to-tree/dist/list-to-tree.js"></script>
+ // //    <script src="bower_components/lodash/lodash.min.js"></script>
+ // $.getJSON("https://www.librarything.com/api_getdata.php?userid=lorem&key=3038189884&booksort=entry_REV&max=1000&showReviews=1&reviewsOnly=1&callback=?", function(response) {
+ //     LTJSON = response.books
+ // })
+ function wantDelete(item, arr){
+  for (var i=0;i<arr.length;i++){
+    if (arr[i]==item){
+      arr.splice(i,1); //this delete from the "i" index in the array to the "1" length
+      break;
+    }
+  }  
+}
+ var linkDataArray = []
+ var nodeDataArray = []
+ for (var i in LTJSON) {
+     if (LTJSON[i].hasreview == "1" && LTJSON[i].bookreview.indexOf("@") != -1) {
+         //has Review
+         shortID = LTJSON[i].bookreview.match(/@[A-z]*/)[0].replace("@", "")
+         if (LTJSON[i].bookreview.indexOf("+") != -1) {
+             //has edge id
+             shortEdgeID = LTJSON[i].bookreview.match(/\+[A-z]*/)[0].replace("+", "")
+         } else {
+             //no edge
+             shortEdgeID = "null"
+         }
+nodeDataArray.push({"_gohashid": shortID.toLowerCase(),"text": shortID, key: shortID.toLowerCase()})
+linkDataArray.push({"from": shortEdgeID.toLowerCase(),to:shortID.toLowerCase()})
+
+/*         allRefs.push(shortEdgeID.toLowerCase())
+         elements.push({
+             id: shortID.toLowerCase(),
+             name: LTJSON[i].title,
+             parent: shortEdgeID.toLowerCase()
+         })*/
+     }
+ }
+
+
+ /*
+
+ console.log(elements)
+ var ltt = new LTT(elements, {
+     key_id: 'id',
+     key_parent: 'parent'
+ });
+ var tree = ltt.GetTree();
+ console.log(tree);
+ (function traverse(o) {
+     for (var i in o) {
+         console.log(o[i].id)
+         allRefs = wantDelete(o[i].id, allRefs)
+         // allRefs.splice(allRefs.indexOf(o[i].id),1)
+         delete o[i].parent
+         if (o[i] !== null && typeof(o[i]) == "object") {
+             //going on step down in the object tree!!
+             traverse(o[i]);
+         }
+     }
+ })
+ (tree);
+ flare = {
+     name: "allLT",
+     children: tree
+ }
+ //console.log(JSON.stringify(flare))
+ console.log(allRefs)

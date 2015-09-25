@@ -1,0 +1,19 @@
+{
+  "name": "LTGraphD3",
+  "version": "0.0.0",
+  "homepage": "https://github.com/jzl003/misc",
+  "authors": [
+    "Jonah Langlieb <jonahlanglieb@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "list-to-tree": "~0.0.4"
+  }
+}

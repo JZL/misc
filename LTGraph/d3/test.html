@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+
+    <title>Collapsible Tree Example</title>
+
+    <style>
+
+  .node circle {
+    fill: #fff;
+    stroke: steelblue;
+    stroke-width: 3px;
+  }
+
+  .node text { font: 12px sans-serif; }
+
+  .link {
+    fill: none;
+    stroke: #ccc;
+    stroke-width: 2px;
+  }
+  
+    </style>
+
+  </head>
+
+  <body>
+
+<!-- load the d3.js library --> 
+<script src="http://d3js.org/d3.v3.min.js"></script>
+  <script src="bower_components/list-to-tree/dist/list-to-tree.js"></script>
+    <script src="bower_components/lodash/lodash.min.js"></script>
+<script>
+
+// var data = [
+//     { "name" : "CA", "parent":"Top Level" },
+//     { "name" : "Top Level", "parent":"null" },
+//     { "name" : "Son of A", "parent":"CA" },
+//     { "name" : "Daughter of A", "parent":"CA" },
+//     { "name" : "CB", "parent":"Top Level" }
+//     ];
+data = [{"name":"crocodile_tears","parent":"snakehead"},{"name":"hp_quidditch","parent":"hp_sorcerers"},{"name":"dark_passage","parent":"shell_game"},{"name":"ark_angel","parent":"scorpia"},{"name":"art_intrusion","parent":"ghost_wires"},{"name":"plugged","parent":"artemis_fowl"},{"name":"final_hour","parent":"long_way"},{"name":"beauty","parent":"diviners"},{"name":"dreadnought","parent":"escape_velocity"},{"name":"tipping_point","parent":"david_goliath"},{"name":"mysterious_benedict","parent":"null"},{"name":"diviners","parent":"john_green"},{"name":"inheritance","parent":"brisingr<br>------<br>As"},{"name":"diamond_age","parent":"reamde"},{"name":"deadlock","parent":"aftershock"},{"name":"tigers_voyage","parent":"tigers_quest"},{"name":"tigers_promise","parent":"tigers_curse"},{"name":"silkworm","parent":"hp_sorcerers"},{"name":"hp_chamber","parent":"hp_sorcers"},{"name":"hp_prisoner","parent":"hp_chamber"},{"name":"hp_order","parent":"hp_goblet"},{"name":"hp_prince","parent":"hp_order"},{"name":"hp_deathly","parent":"hp_prince"},{"name":"hp_prequel","parent":"hp_sorcerers"},{"name":"pathfinder","parent":"enders_game"},{"name":"disney_shadow","parent":"disney_dawn"},{"name":"earth_unawakens","parent":"earth_afire"},{"name":"overlord","parent":"hive"},{"name":"maisie_dobbs","parent":"mom"},{"name":"tiger","parent":"ryan_holiday"},{"name":"seperate_peace","parent":"english"},{"name":"supernaturalist","parent":"artemis_fowl"},{"name":"time_paradox","parent":"lost_colony"},{"name":"penumbra","parent":"wired"},{"name":"wish_list","parent":"artemis_fowl"},{"name":"ghost_wires","parent":"library"},{"name":"siddhartha","parent":"english"},{"name":"i_messenger","parent":"book_thief"},{"name":"earth_unaware","parent":"enders_game"},{"name":"earth_afire","parent":"earth_unaware"},{"name":"rider_gadgets","parent":"library"},{"name":"dinner","parent":"null"},{"name":"in_vino","parent":"null"},{"name":"long_earth","parent":"color_magic"},{"name":"magic_finger","parent":"charlie_chocolate"},{"name":"dumbledores_army","parent":"hp_sorcerers"},{"name":"last_thing","parent":"null"},{"name":"chocolate_war","parent":"null"},{"name":"kill_mockingbird","parent":"school"},{"name":"call_of","parent":"school"},{"name":"long_war","parent":"long_earth"},{"name":"dark_eyes","parent":"library"},{"name":"cutting_for","parent":"null"},{"name":"grand_design","parent":"brief_history"},{"name":"magicians_land","parent":"magician_king<br>Having"},{"name":"glass_castle","parent":"english"},{"name":"unbroken","parent":"book_club"},{"name":"color_magic","parent":"good_omens"},{"name":"things_make","parent":"numberphile<br>I"},{"name":"good_omens","parent":"american_gods<br>I"},{"name":"brief_history","parent":"george_secret<br>This"},{"name":"eat_pray<br>I","parent":"null"},{"name":"hobbit","parent":"english"},{"name":"shipping_news","parent":"Mshamilton<br>I"},{"name":"days_blood","parent":"daughter_smoke<br>This"},{"name":"dream_gods","parent":"daughter_smoke<br>Of"},{"name":"visitors","parent":"ruins<br>I"},{"name":"princess_bride<br>This","parent":"null"},{"name":"lock_in<br>I","parent":"null"},{"name":"godels_proof","parent":"godel_escher<br>A"},{"name":"drop_drink","parent":"handful_dust<br>This"},{"name":"handful_dust","parent":"book_club<br>An"},{"name":"american_gods","parent":"anansi_boys"},{"name":"odalisque","parent":"king_vagabonds"},{"name":"king_vagabonds","parent":"quicksilver"},{"name":"ocean_end<br>Gaian","parent":"null"},{"name":"brunelleschis_dome","parent":"mitchell<br>A"},{"name":"strange_loop","parent":"godel_escher<br>This"},{"name":"beyond_chocolate","parent":"chocolate_war"},{"name":"le_ton","parent":"godel_escher<br>A"},{"name":"gang_leader","parent":"ryan_holiday"},{"name":"howls_moving","parent":"null"},{"name":"curious_incident","parent":"null"},{"name":"shakespeare_saved","parent":"null"},{"name":"hp_sorcerers","parent":"null"},{"name":"hacker_hoaxer","parent":"library"},{"name":"saturday","parent":"school"},{"name":"george_secret","parent":"null"},{"name":"own_country","parent":"cutting_for"},{"name":"tennis_partner","parent":"cutting_for"},{"name":"long_utopia","parent":"long_mars"},{"name":"long_mars","parent":"long_war"},{"name":"art_deception","parent":"ghost_wires"},{"name":"skeleton_key","parent":"point_blank"}]
+
+// *********** Convert flat data into a nice tree ***************
+// create a name: node map
+var dataMap = data.reduce(function(map, node) {
+  map[node.name] = node;
+  return map;
+}, {});
+
+// create the tree array
+var treeData = [];
+data.forEach(function(node) {
+  // add to parent
+  var parent = dataMap[node.parent];
+  if (parent) {
+    // create child array if it doesn't exist
+    (parent.children || (parent.children = []))
+      // add node to child array
+      .push(node);
+  } else {
+    // parent is null or missing
+    treeData.push(node);
+  }
+});
+
+// ************** Generate the tree diagram  *****************
+var margin = {top: 20, right: 120, bottom: 20, left: 120},
+  width = 960 - margin.right - margin.left,
+  height = 500 - margin.top - margin.bottom;
+  
+var i = 0;
+
+var tree = d3.layout.tree()
+  .size([height, width]);
+
+var diagonal = d3.svg.diagonal()
+  .projection(function(d) { return [d.y, d.x]; });
+
+var svg = d3.select("body").append("svg")
+  .attr("width", width + margin.right + margin.left)
+  .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+  .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+root = treeData[0];
+  
+update(root);
+
+function update(source) {
+
+  // Compute the new tree layout.
+  var nodes = tree.nodes(root).reverse(),
+    links = tree.links(nodes);
+
+  // Normalize for fixed-depth.
+  nodes.forEach(function(d) { d.y = d.depth * 180; });
+
+  // Declare the nodes…
+  var node = svg.selectAll("g.node")
+    .data(nodes, function(d) { return d.id || (d.id = ++i); });
+
+  // Enter the nodes.
+  var nodeEnter = node.enter().append("g")
+    .attr("class", "node")
+    .attr("transform", function(d) { 
+      return "translate(" + d.y + "," + d.x + ")"; });
+
+  nodeEnter.append("circle")
+    .attr("r", 10)
+    .style("fill", "#fff");
+
+  nodeEnter.append("text")
+    .attr("x", function(d) { 
+      return d.children || d._children ? -13 : 13; })
+    .attr("dy", ".35em")
+    .attr("text-anchor", function(d) { 
+      return d.children || d._children ? "end" : "start"; })
+    .text(function(d) { return d.name; })
+    .style("fill-opacity", 1);
+
+  // Declare the links…
+  var link = svg.selectAll("path.link")
+    .data(links, function(d) { return d.target.id; });
+
+  // Enter the links.
+  link.enter().insert("path", "g")
+    .attr("class", "link")
+    .attr("d", diagonal);
+
+}
+
+</script>
+  
+  </body>
+</html>

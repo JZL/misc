@@ -1,0 +1,12 @@
+{
+  "name": "LTGraph",
+  "version": "1.0.0",
+  "description": "Graph for LT Books to see where gain books",
+  "main": "index.js",
+  "dependencies": {
+    "cytoscape": "^2.4.7"
+  },
+  "devDependencies": {},
+  "author": "Jonah Langlieb (jonahmail1@gmail.com)",
+  "license": "MIT"
+}
